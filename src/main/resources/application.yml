@@ -1,0 +1,20 @@
+server:
+  port: 11000
+  servlet:
+    context-path: /
+
+spring:
+  name: cd_service_01
+
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          servlet:
+            mvc:
+              method:
+                annotation: TRACE
+
+
+
