@@ -2,6 +2,7 @@ package com.tank.controller;
 
 
 import com.tank.client.Client;
+import com.tank.common.protocol.ApiResult;
 import com.tank.common.protocol.CoordinatorReq;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class CommitController {
 
   @PostMapping("/coordinate")
-  public ResponseEntity<String> commit(@RequestBody @NonNull final CoordinatorReq coordinatorReq) {
+  public ResponseEntity<ApiResult<String>> commit(@RequestBody @NonNull final CoordinatorReq coordinatorReq) {
     this.client.notificationSelectorNode(coordinatorReq);
-    return ResponseEntity.ok("commit");
+    ApiResult<String> apiResult = new ApiResult<>();
+    apiResult.setData("commit");
+    return ResponseEntity.ok(apiResult);
   }
 
   @Autowired
