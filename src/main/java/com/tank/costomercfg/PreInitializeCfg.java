@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * @author tank198435163.com
@@ -14,6 +15,12 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 @Configuration
 public class PreInitializeCfg {
+
+
+  @Bean
+  public RestTemplate initTemplate() {
+    return new RestTemplate();
+  }
 
   @Bean
   public CommandLineRunner init() {
