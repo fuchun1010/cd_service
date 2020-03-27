@@ -23,13 +23,6 @@ public class PreInitializeCfg {
     };
   }
 
-//  @Bean
-//  public Client initClient() {
-//    Client client = new Client();
-//    client.sayAppName(this.appName);
-//    return client;
-//  }
-
   @Value("${spring.name}")
   private String appName;
 

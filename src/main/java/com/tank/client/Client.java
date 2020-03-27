@@ -1,6 +1,8 @@
 package com.tank.client;
 
 import com.tank.common.DataPackage;
+import com.tank.common.JsonUtil;
+import com.tank.common.protocol.CoordinatorReq;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 @Slf4j
 @Component
@@ -21,35 +24,32 @@ public class Client implements Runnable {
     this.socket = this.initSocket();
   }
 
-  private Socket initSocket() {
-    String ip = "localhost";
-    int port = 10001;
-    Socket socket = null;
-    try {
-      socket = new Socket(ip, port);
-      log.info("connect ip:[{}],Port:[{}] success", ip, port);
-
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return socket;
+  public void notificationSelectorNode(final CoordinatorReq coordinatorReq) {
+    int type = 1;
+    this.sendMessage(type, jsonUtil.toJsonStr(coordinatorReq).orElse("-"), this::sendMessage);
   }
-
 
   public void sayHello(String message) {
     int type = 0;
+    this.sendMessage(type, message, this::sendMessage);
+  }
+
+
+  public void sendMessage(int type, String message, Consumer<byte[]> consumer) {
     byte[] data = this.dataPackage.content(type, message.getBytes(), ByteBuffer::array);
+    consumer.accept(data);
+  }
+
+  private void sendMessage(byte[] data) {
     try {
       BufferedOutputStream out = new BufferedOutputStream(socket.getOutputStream());
       out.write(data);
       out.flush();
-
     } catch (IOException e) {
-      log.info("sayAppName error:[{}]", e.getMessage());
+      log.info("send message error:[{}]", e.getMessage());
     }
     log.info("socket status is:[{}]", socket.isConnected() ? "keep" : "closed");
   }
-
 
   @Override
   @SneakyThrows
@@ -80,6 +80,20 @@ public class Client implements Runnable {
     }
   }
 
+  private Socket initSocket() {
+    //TODO remove hard coding for ip and port
+    String ip = "localhost";
+    int port = 10001;
+    Socket socket = null;
+    try {
+      socket = new Socket(ip, port);
+      log.info("connect ip:[{}],Port:[{}] success", ip, port);
+
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return socket;
+  }
 
   @Autowired
   private DataPackage dataPackage;
@@ -87,6 +101,9 @@ public class Client implements Runnable {
   private Socket socket;
 
   private final int K = 1024;
+
+  @Autowired
+  private JsonUtil jsonUtil;
 
 
 }

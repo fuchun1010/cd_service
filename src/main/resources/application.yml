@@ -1,10 +1,15 @@
 server:
   port: 11000
   servlet:
-    context-path: /
+    context-path: /coordinator_service
 
 spring:
   name: cd_service_01
+
+
+coordinatorSelector:
+  ip: localhost
+  port: 10001
 
 logging:
   level:
